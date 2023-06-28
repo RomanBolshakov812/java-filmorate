@@ -14,21 +14,25 @@ import java.util.Map;
 @RequestMapping("/films")
 public class FilmController {
     private final Map<Integer, Film> films = new HashMap<>();
-    private int generateId = 0;
+    private int generateId = 1;
 
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
         isValid(film);
-        generateId++;
-        film.setId(generateId);
+        //generateId++;
+        film.setId(generateId++);
         films.put(film.getId(), film);
         return film;
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
-        isValid(film);
-        films.put(film.getId(), film);
+        if (!films.containsKey(film.getId())) {
+            throw new ValidationException("Такого фильма не существует!");
+        } else {
+            isValid(film);
+            films.put(film.getId(), film);
+        }
         return film;
     }
 

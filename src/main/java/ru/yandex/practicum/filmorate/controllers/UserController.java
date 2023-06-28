@@ -15,21 +15,27 @@ import java.util.Map;
 public class UserController {
 
     private final Map<Integer, User> users = new HashMap<>();
-    private int generateId = 0;
+    private int generateId = 1;
 
     @PostMapping
     public User createUser(@RequestBody User user) {
         isValid(user);
-        generateId++;
-        user.setId(generateId);
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
+        user.setId(generateId++);
         users.put(user.getId(), user);
         return user;
     }
 
     @PutMapping
     public User updateUser(@RequestBody User user) {
-        isValid(user);
-        users.put(user.getId(), user);
+        if (!users.containsKey(user.getId())) {
+            throw new ValidationException("Такого пользователя не существует!");
+        } else {
+            isValid(user);
+            users.put(user.getId(), user);
+        }
         return user;
     }
 
@@ -39,14 +45,12 @@ public class UserController {
     }
 
     private  void isValid(User user) {
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+        if (user.getEmail().isBlank() | !user.getEmail().contains("@")) {
             throw new ValidationException("Неверная электронная почта!");
         } else if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             throw new ValidationException("Неверный логин!");
         } else if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Неверная дата рождения!");
-        } else if (user.getName().isBlank()) {
-            user.setName(user.getLogin());
         }
     }
 }
