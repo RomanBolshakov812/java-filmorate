@@ -20,7 +20,7 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user) {
         isValid(user);
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         user.setId(generateId++);
