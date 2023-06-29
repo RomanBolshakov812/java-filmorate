@@ -1,8 +1,9 @@
-package ru.yandex.practicum.filmorate.controllers;
+package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.models.User;
+import ru.yandex.practicum.filmorate.exception.NullObjectException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,8 +31,8 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            throw new ValidationException("Такого пользователя не существует!");
+        if (users.get(user.getId()) == null) {
+            throw new NullObjectException("Такого пользователя не существует!");
         } else {
             isValid(user);
             users.put(user.getId(), user);
