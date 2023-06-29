@@ -34,6 +34,8 @@ public class UserController {
         if (users.get(user.getId()) == null) {
             throw new NullObjectException("Такого пользователя не существует!");
         }
+        isValid(user);
+        users.put(user.getId(), user);
         return user;
     }
 
@@ -43,11 +45,11 @@ public class UserController {
     }
 
     private  void isValid(User user) {
-        if (user.getEmail().isBlank() | !user.getEmail().contains("@")) {
+        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException("Неверная электронная почта!");
-        } else if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+        } else if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             throw new ValidationException("Неверный логин!");
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
+        } else if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Неверная дата рождения!");
         }
     }

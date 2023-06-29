@@ -30,6 +30,8 @@ public class FilmController {
         if (films.get(film.getId()) == null) {
             throw new NullObjectException("Такого фильма не существует!");
         }
+        isValid(film);
+        films.put(film.getId(), film);
         return film;
     }
 
@@ -39,13 +41,13 @@ public class FilmController {
     }
 
     private  void isValid(Film film) {
-        if (film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException("Название фильма не может быть пустым!");
-        } else if (film.getDescription().length() > 200) {
+        } else if (film.getDescription() == null || film.getDescription().length() > 200) {
             throw new ValidationException("Описание должно быть не более 200 символов!");
-        } else if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
+        } else if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
             throw new ValidationException("Неверная дата релиза!");
-        } else if (film.getDuration() <= 0) {
+        } else if (film.getDuration() == null || film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной!");
         }
     }
