@@ -30,46 +30,26 @@ class FilmControllerTest {
 
     @Test
     void shouldBeEmptyName() {
-        try {
-            filmController.addFilm(filmWithEmptyName);
-        } catch (ValidationException e) {
-            assertEquals("Название фильма не может быть пустым!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> filmController.addFilm(filmWithEmptyName));
     }
 
     @Test
     void shouldBeDescriptionMore200() {
-        try {
-            filmController.addFilm(filmWithDescriptionMore200);
-        } catch (ValidationException e) {
-            assertEquals("Описание должно быть не более 200 символов!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> filmController.addFilm(filmWithDescriptionMore200));
     }
 
     @Test
     void shouldBeReleaseDateBeforeLimit() {
-        try {
-            filmController.addFilm(filmWhereReleaseBeforeLimit);
-        } catch (ValidationException e) {
-            assertEquals("Неверная дата релиза!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> filmController.addFilm(filmWhereReleaseBeforeLimit));
     }
 
     @Test
     void shouldBeZeroDuration() {
-        try {
-            filmController.addFilm(filmWhereZeroDuration);
-        } catch (ValidationException e) {
-            assertEquals("Продолжительность фильма должна быть положительной!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () ->  filmController.addFilm(filmWhereZeroDuration));
     }
 
     @Test
     void shouldBeNegativeDurations() {
-        try {
-            filmController.addFilm(filmWhereNegativeDuration);
-        } catch (ValidationException e) {
-            assertEquals("Продолжительность фильма должна быть положительной!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> filmController.addFilm(filmWhereNegativeDuration));
     }
 }

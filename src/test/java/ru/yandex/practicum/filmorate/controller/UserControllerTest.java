@@ -21,38 +21,22 @@ class UserControllerTest {
 
     @Test
     void shouldBeEmptyEmail() {
-        try {
-            userController.createUser(userWithEmptyEmail);
-        } catch (ValidationException e) {
-            assertEquals("Неверная электронная почта!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> userController.createUser(userWithEmptyEmail));
     }
 
     @Test
     void shouldBeIncorrectEmail() {
-        try {
-            userController.createUser(userWithIncorrectEmail);
-        } catch (ValidationException e) {
-            assertEquals("Неверная электронная почта!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> userController.createUser(userWithIncorrectEmail));
     }
 
     @Test
     void shouldBeEmptyLogin() {
-        try {
-            userController.createUser(userWithEmptyLogin);
-        } catch (ValidationException e) {
-            assertEquals("Неверный логин!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> userController.createUser(userWithEmptyLogin));
     }
 
     @Test
     void shouldBeIncorrectLogin() {
-        try {
-            userController.createUser(userWithIncorrectLogin);
-        } catch (ValidationException e) {
-            assertEquals("Неверный логин!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> userController.createUser(userWithIncorrectLogin));
     }
 
     @Test
@@ -63,10 +47,6 @@ class UserControllerTest {
 
     @Test
     void shouldBeIncorrectBirthday() {
-        try {
-            userController.createUser(userWithIncorrectBirthday);
-        } catch (ValidationException e) {
-            assertEquals("Неверная дата рождения!", e.getMessage());
-        }
+        assertThrows(ValidationException.class, () -> userController.createUser(userWithIncorrectBirthday));
     }
 }

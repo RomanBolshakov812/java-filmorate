@@ -33,9 +33,6 @@ public class UserController {
     public User updateUser(@RequestBody User user) {
         if (users.get(user.getId()) == null) {
             throw new NullObjectException("Такого пользователя не существует!");
-        } else {
-            isValid(user);
-            users.put(user.getId(), user);
         }
         return user;
     }

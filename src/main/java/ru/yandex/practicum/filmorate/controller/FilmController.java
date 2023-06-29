@@ -29,9 +29,6 @@ public class FilmController {
     public Film updateFilm(@RequestBody Film film) {
         if (films.get(film.getId()) == null) {
             throw new NullObjectException("Такого фильма не существует!");
-        } else {
-            isValid(film);
-            films.put(film.getId(), film);
         }
         return film;
     }
