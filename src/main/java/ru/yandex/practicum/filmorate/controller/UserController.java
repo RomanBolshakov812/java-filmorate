@@ -1,56 +1,56 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NullObjectException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
+@AllArgsConstructor
 public class UserController {
 
-    private final Map<Integer, User> users = new HashMap<>();
-    private int generateId = 1;
+    private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/users")
     public User createUser(@RequestBody User user) {
-        isValid(user);
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        user.setId(generateId++);
-        users.put(user.getId(), user);
-        return user;
+        return userService.createUser(user);
     }
 
-    @PutMapping
+    @PutMapping("/users")
     public User updateUser(@RequestBody User user) {
-        if (users.get(user.getId()) == null) {
-            throw new NullObjectException("Такого пользователя не существует!");
-        }
-        isValid(user);
-        users.put(user.getId(), user);
-        return user;
+        return userService.updateUser(user);
     }
 
-    @GetMapping
+    @GetMapping("/users")
     public List<User> getAllUsers() {
-        return new ArrayList<>(users.values());
+        return userService.getAllUsers();
     }
 
-    private  void isValid(User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Неверная электронная почта!");
-        } else if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new ValidationException("Неверный логин!");
-        } else if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Неверная дата рождения!");
-        }
+    @GetMapping("/users/{id}")
+    public User getUser(@PathVariable Integer id) {
+        return userService.getUser(id);
+    }
+
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public List<User> getAllFriends(@PathVariable Integer id) {
+        return userService.getAllFriends(id);
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 }
+
