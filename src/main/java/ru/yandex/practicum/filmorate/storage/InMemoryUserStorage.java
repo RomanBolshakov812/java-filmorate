@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import java.util.*;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NullObjectException;
 import ru.yandex.practicum.filmorate.model.User;
-
-import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {

@@ -1,11 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
