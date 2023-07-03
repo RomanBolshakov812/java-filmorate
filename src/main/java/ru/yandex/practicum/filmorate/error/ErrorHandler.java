@@ -11,13 +11,13 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 public class ErrorHandler {
     @ExceptionHandler(NullObjectException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNullObjectException (final NullObjectException e) {
+    public ErrorResponse handleNullObjectException(final NullObjectException e) {
         return new ErrorResponse("Ошибка: объект не найден!", e.getMessage());
     }
 
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException (final ValidationException e) {
+    public ErrorResponse handleValidationException(final ValidationException e) {
         return new ErrorResponse("Ошибка валидации!", e.getMessage());
     }
 }
