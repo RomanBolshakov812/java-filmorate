@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NegativeValueException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -38,17 +40,38 @@ public class InMemoryFilmService implements FilmService {
 
     @Override
     public void addLike(Integer filmId, Integer userId) {
-        filmStorage.addLike(filmId, userId);
+        if (filmId < 0 || userId < 0) {
+            throw new NegativeValueException("Неверный id!");
+        }
+        Film film = filmStorage.getFilm(filmId);
+        film.getLikes().add(userId);
+        filmStorage.updateFilm(film);
     }
 
     @Override
     public void deleteLike(Integer filmId, Integer userId) {
-        filmStorage.deleteLike(filmId, userId);
+        if (filmId < 0 || userId < 0) {
+            throw new NegativeValueException("Неверный id!");
+        }
+        Film film = filmStorage.getFilm(filmId);
+        film.getLikes().remove(userId);
+        filmStorage.updateFilm(film);
     }
 
     @Override
     public List<Film> getPopularFilms(Integer count) {
-        return filmStorage.getPopularFilms(count);
+        List<Film> sortedFilms = filmStorage.getAllFilms();
+        Comparator<Film> comparator = new Comparator<Film>() {
+            @Override
+            public int compare(Film o1, Film o2) {
+                return  o2.getLikes().size() - o1.getLikes().size();
+            }
+        };
+        sortedFilms.sort(comparator);
+        if (sortedFilms.size() > count) {
+            sortedFilms = sortedFilms.subList(0, count);
+        }
+        return sortedFilms;
     }
 
     private  void isValid(Film film) {

@@ -1,9 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NegativeValueException;
+import ru.yandex.practicum.filmorate.exception.NullObjectException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -12,7 +16,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 @AllArgsConstructor
 public class InMemoryUserService implements UserService {
 
-    public final UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Override
     public User createUser(User user) {
@@ -39,24 +43,60 @@ public class InMemoryUserService implements UserService {
         return userStorage.getUser(id);
     }
 
-    @Override
     public void addFriend(Integer userId, Integer friendId) {
-        userStorage.addFriend(userId, friendId);
+        if (userId < 0 || friendId < 0) {
+            throw new NegativeValueException("Неверный id!");
+        }
+        User userFirst = userStorage.getUser(userId);
+        userFirst.getFriends().add(friendId);
+        userStorage.updateUser(userFirst);
+        User userSecond = userStorage.getUser(friendId);
+        userSecond.getFriends().add(userId);
+        userStorage.updateUser(userSecond);
     }
 
     @Override
     public void deleteFriend(Integer userId, Integer friendId) {
-        userStorage.deleteFriend(userId, friendId);
+        if (userId < 0 || friendId < 0) {
+            throw new NegativeValueException("Неверный id!");
+        }
+        User userFirst = userStorage.getUser(userId);
+        userFirst.getFriends().remove(friendId);
+        userStorage.updateUser(userFirst);
+        User userSecond = userStorage.getUser(friendId);
+        userSecond.getFriends().remove(userId);
+        userStorage.updateUser(userSecond);
     }
 
     @Override
     public List<User> getAllFriends(Integer userId) {
-        return userStorage.getAllFriends(userId);
+        if (userId < 0) {
+            throw new NegativeValueException("Неверный id!");
+        }
+        if (userStorage.getUser(userId).getFriends() == null || userStorage.getUser(userId).getFriends().isEmpty()) {
+            throw new NullObjectException("У пользователя нет друзей!");
+        }
+        List<User> friendsList = new ArrayList<>();
+        for (Integer id : userStorage.getUser(userId).getFriends()) {
+            friendsList.add(userStorage.getUser(id));
+        }
+        return friendsList;
     }
 
     @Override
     public List<User> getCommonFriends(Integer id, Integer otherId) {
-        return userStorage.getCommonFriends(id, otherId);
+        if (id < 0 || otherId < 0) {
+            throw new NegativeValueException("Неверный id!");
+        }
+        Set<Integer> firstUserFriends = userStorage.getUser(id).getFriends();
+        Set<Integer> secondUserFriends = userStorage.getUser(otherId).getFriends();
+        List<User> commonFriends = new ArrayList<>();
+        for (Integer currentId : firstUserFriends) {
+            if (secondUserFriends.contains(currentId)) {
+                commonFriends.add(userStorage.getUser(currentId));
+            }
+        }
+        return commonFriends;
     }
 
     private  void isValid(User user) {
