@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NegativeValueException;
 import ru.yandex.practicum.filmorate.exception.NullObjectException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -44,40 +43,28 @@ public class InMemoryUserService implements UserService {
     }
 
     public void addFriend(Integer userId, Integer friendId) {
-        if (userId < 0 || friendId < 0) {
-            throw new NegativeValueException("Неверный id!");
-        }
         User userFirst = userStorage.getUser(userId);
-        userFirst.getFriends().add(friendId);
-        userStorage.updateUser(userFirst);
         User userSecond = userStorage.getUser(friendId);
+        userFirst.getFriends().add(friendId);
         userSecond.getFriends().add(userId);
-        userStorage.updateUser(userSecond);
     }
 
     @Override
     public void deleteFriend(Integer userId, Integer friendId) {
-        if (userId < 0 || friendId < 0) {
-            throw new NegativeValueException("Неверный id!");
-        }
         User userFirst = userStorage.getUser(userId);
-        userFirst.getFriends().remove(friendId);
-        userStorage.updateUser(userFirst);
         User userSecond = userStorage.getUser(friendId);
+        userFirst.getFriends().remove(friendId);
         userSecond.getFriends().remove(userId);
-        userStorage.updateUser(userSecond);
     }
 
     @Override
     public List<User> getAllFriends(Integer userId) {
-        if (userId < 0) {
-            throw new NegativeValueException("Неверный id!");
-        }
-        if (userStorage.getUser(userId).getFriends() == null || userStorage.getUser(userId).getFriends().isEmpty()) {
+        Set<Integer> friendIdList = userStorage.getUser(userId).getFriends();
+        if (friendIdList == null || friendIdList.isEmpty()) {
             throw new NullObjectException("У пользователя нет друзей!");
         }
         List<User> friendsList = new ArrayList<>();
-        for (Integer id : userStorage.getUser(userId).getFriends()) {
+        for (Integer id : friendIdList) {
             friendsList.add(userStorage.getUser(id));
         }
         return friendsList;
@@ -85,9 +72,6 @@ public class InMemoryUserService implements UserService {
 
     @Override
     public List<User> getCommonFriends(Integer id, Integer otherId) {
-        if (id < 0 || otherId < 0) {
-            throw new NegativeValueException("Неверный id!");
-        }
         Set<Integer> firstUserFriends = userStorage.getUser(id).getFriends();
         Set<Integer> secondUserFriends = userStorage.getUser(otherId).getFriends();
         List<User> commonFriends = new ArrayList<>();

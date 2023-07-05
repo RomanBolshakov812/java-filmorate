@@ -5,16 +5,17 @@ import java.util.Comparator;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NegativeValueException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 @Service
 @AllArgsConstructor
 public class InMemoryFilmService implements FilmService {
 
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Override
     public Film addFilm(Film film) {
@@ -40,22 +41,16 @@ public class InMemoryFilmService implements FilmService {
 
     @Override
     public void addLike(Integer filmId, Integer userId) {
-        if (filmId < 0 || userId < 0) {
-            throw new NegativeValueException("Неверный id!");
-        }
         Film film = filmStorage.getFilm(filmId);
+        userStorage.getUser(userId);
         film.getLikes().add(userId);
-        filmStorage.updateFilm(film);
     }
 
     @Override
     public void deleteLike(Integer filmId, Integer userId) {
-        if (filmId < 0 || userId < 0) {
-            throw new NegativeValueException("Неверный id!");
-        }
         Film film = filmStorage.getFilm(filmId);
+        userStorage.getUser(userId);
         film.getLikes().remove(userId);
-        filmStorage.updateFilm(film);
     }
 
     @Override
