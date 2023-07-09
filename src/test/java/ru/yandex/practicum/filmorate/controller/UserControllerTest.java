@@ -1,10 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.dao.FriendsDao;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.InMemoryUserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
 import java.time.LocalDate;
 
@@ -12,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
 
-    private final UserController userController = new UserController(new InMemoryUserService(new InMemoryUserStorage()));
+    private final UserController userController = new UserController(new InMemoryUserService(new UserDbStorage()));
 
     User userWithEmptyEmail = new User(1, "", "login", "name", LocalDate.parse("1965-12-10"));
     User userWithIncorrectEmail = new User(1, "mail.ru", "login", "name", LocalDate.parse("1965-12-10"));

@@ -12,9 +12,11 @@ public interface FilmService {
 
     Film getFilm(Integer id);
 
-    void addLike(Integer filmId, Integer userId);
+    void addLike(Integer userId, Integer filmId);
 
     void deleteLike(Integer filmId, Integer userId);
+
+    Integer getRate(Integer filmId);
 
     List<Film> getPopularFilms(Integer count);
 }
