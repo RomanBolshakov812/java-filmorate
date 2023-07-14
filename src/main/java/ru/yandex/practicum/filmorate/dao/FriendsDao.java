@@ -62,8 +62,8 @@ public class FriendsDao {
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
         String sqlQuery = "select u.user_id, u.name, u.login, u.email, u.birthday from users u "
-                + "join (select uf.friend_id, count(*) " +
-                "from (select user_id id, friend_id, confirmed from user_friends  "
+                + "join (select uf.friend_id, count(*) "
+                + "from (select user_id id, friend_id, confirmed from user_friends  "
                 + "where user_id = ? or user_id = ?) as uf "
                 + "group by uf.friend_id having count(*) > 1) as of on of.friend_id = u.user_id";
         return jdbcTemplate.query(sqlQuery, userRowMapper(), id, otherId);

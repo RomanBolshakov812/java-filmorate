@@ -20,11 +20,11 @@ public class GenreDao {
         return jdbcTemplate.queryForObject(sqlQuery, allGenreRowMapper());
     }
 
-    public Genre getGenre(Integer genre_id) {
+    public Genre getGenre(Integer genreId) {
         Genre genre = new Genre();
         try {
             genre = jdbcTemplate.queryForObject("select * from genres where genre_id = ?",
-                    genreRowMapper(), genre_id);
+                    genreRowMapper(), genreId);
         } catch (RuntimeException e) {
             throw new NullObjectException("Жанр с id = " + genre.getId() + " не найден!");
         }

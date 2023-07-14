@@ -20,11 +20,11 @@ public class MpaDao {
         return jdbcTemplate.queryForObject(sqlQuery, allMpaRowMapper());
     }
 
-    public Mpa getMpa(Integer mpa_id) {
+    public Mpa getMpa(Integer mpaId) {
         Mpa mpa = new Mpa();
         try {
             mpa = jdbcTemplate.queryForObject("select * from mpa where mpa_id = ?",
-                    mpaRowMapper(), mpa_id);
+                    mpaRowMapper(), mpaId);
         } catch (RuntimeException e) {
             throw new NullObjectException("Mpa с id = " + mpa.getId() + " не найден!");
         }
