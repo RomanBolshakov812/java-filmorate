@@ -35,7 +35,6 @@ CREATE TABLE if not exists user_film_like (
   PRIMARY KEY (user_id, film_id)
 );
 
-
 CREATE TABLE if not exists user_friends (
   user_id integer,
   friend_id integer,
