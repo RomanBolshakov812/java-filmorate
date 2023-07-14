@@ -1,13 +1,15 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NullObjectException;
 import ru.yandex.practicum.filmorate.model.User;
-import java.util.List;
-import java.util.Map;
 
 @Component("userDbStorage")
 @RequiredArgsConstructor
@@ -17,7 +19,8 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate.getDataSource())
+        SimpleJdbcInsert simpleJdbcInsert =
+                new SimpleJdbcInsert(Objects.requireNonNull(jdbcTemplate.getDataSource()))
                 .withTableName("users")
                 .usingGeneratedKeyColumns("user_id");
         Map<String, String> params = Map.of(
@@ -32,13 +35,21 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        String sqlQuery = "update users set name = ?, login = ?, email = ?, birthday = ? where user_id = ?";
+        Integer userId = user.getId();
+        try {
+            String sqlQueryExists = "select user_id from users where user_id = ?";
+            jdbcTemplate.queryForObject(sqlQueryExists, Integer.class, userId);
+        } catch (RuntimeException ex) {
+            throw new NullObjectException("Пользователь с id = " + user.getId() + " не найден!");
+        }
+        String sqlQuery = "update users set name = ?, login = ?, email = ?, "
+                    + "birthday = ? where user_id = ?";
         jdbcTemplate.update(sqlQuery,
                 user.getName(),
                 user.getLogin(),
                 user.getEmail(),
                 user.getBirthday(),
-                user.getId());
+                userId);
         return user;
     }
 
@@ -49,7 +60,14 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUser(Integer id) {
-        return jdbcTemplate.queryForObject("select * from users where user_id = ?", userRowMapper(), id);
+        User user = new User();
+        try {
+            user = jdbcTemplate.queryForObject("select * from users where user_id = ?",
+                    userRowMapper(), id);
+        } catch (RuntimeException e) {
+            throw new NullObjectException("Пользователь с id = " + user.getId() + " не найден!");
+        }
+        return user;
     }
 
     private RowMapper<User> userRowMapper() {

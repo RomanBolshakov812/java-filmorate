@@ -7,11 +7,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.GenreDao;
 import ru.yandex.practicum.filmorate.dao.LikeDao;
+import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 @Service
 @AllArgsConstructor
@@ -21,10 +24,11 @@ public class InMemoryFilmService implements FilmService {
     @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
     @Autowired
-    @Qualifier("userDbStorage")
-    private final UserStorage userStorage;
-    @Autowired
     private final LikeDao likeDao;
+    @Autowired
+    private final MpaDao mpaDao;
+    @Autowired
+    private final GenreDao genreDao;
 
     @Override
     public Film addFilm(Film film) {
@@ -49,8 +53,8 @@ public class InMemoryFilmService implements FilmService {
     }
 
     @Override
-    public void addLike(Integer userId, Integer filmId) {
-        likeDao.addLike(userId, filmId);
+    public void addLike(Integer filmId, Integer userId) {
+        likeDao.addLike(filmId, userId);
     }
 
     @Override
@@ -74,15 +78,38 @@ public class InMemoryFilmService implements FilmService {
         return sortedFilms;
     }
 
+    @Override
+    public List<Mpa> getAllMpa() {
+        return mpaDao.getAllMpa();
+    }
+
+    @Override
+    public Mpa getMpa(Integer mpa_id) {
+        return mpaDao.getMpa(mpa_id);
+    }
+
+    @Override
+    public List<Genre> getAllGenre() {
+        return genreDao.getAllGenre();
+    }
+
+    @Override
+    public Genre getGenre(Integer genre_id) {
+        return genreDao.getGenre(genre_id);
+    }
+
     private  void isValid(Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException("Название фильма не может быть пустым!");
         } else if (film.getDescription() == null || film.getDescription().length() > 200) {
             throw new ValidationException("Описание должно быть не более 200 символов!");
-        } else if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
+        } else if (film.getReleaseDate() == null || film.getReleaseDate()
+                .isBefore(LocalDate.parse("1895-12-28"))) {
             throw new ValidationException("Неверная дата релиза!");
         } else if (film.getDuration() == null || film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной!");
+        } else if (film.getMpa() == null) {
+            throw new ValidationException("Необходимо указать рейтинг MPA!");
         }
     }
 }

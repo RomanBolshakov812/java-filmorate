@@ -4,6 +4,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 @RestController
@@ -45,5 +47,25 @@ public class FilmController {
     @GetMapping("/films/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
         return filmService.getPopularFilms(count);
+    }
+
+    @GetMapping("/mpa")
+    public List<Mpa> getAllMpa() {
+        return filmService.getAllMpa();
+    }
+
+    @GetMapping("mpa/{id}")
+    public Mpa getMpa(@PathVariable Integer id) {
+        return filmService.getMpa(id);
+    }
+
+    @GetMapping("/genres")
+    public List<Genre> getAllGenre() {
+        return filmService.getAllGenre();
+    }
+
+    @GetMapping("genres/{id}")
+    public Genre getGenre(@PathVariable Integer id) {
+        return filmService.getGenre(id);
     }
 }
