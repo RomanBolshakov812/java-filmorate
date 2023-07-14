@@ -24,9 +24,9 @@ public interface FilmService {
 
     public List<Mpa> getAllMpa();
 
-    public Mpa getMpa(Integer mpa_id);
+    public Mpa getMpa(Integer mpaId);
 
     public List<Genre> getAllGenre();
 
-    public Genre getGenre(Integer genre_id);
+    public Genre getGenre(Integer genreId);
 }

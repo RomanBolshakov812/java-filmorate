@@ -165,19 +165,19 @@ public class FilmDbStorage implements FilmStorage {
                 newGenres.add(n);
             }
         });
-        int film_id = film.getId();
+        int filmId = film.getId();
         String sqlQuery;
         StringBuilder sb =
                 new StringBuilder("insert into film_genres (film_id, genre_id) values (");
         if (!newGenres.isEmpty()) {
             if (newGenres.size() == 1) {
                 sqlQuery = "insert into film_genres (film_id, genre_id) "
-                        + "values (" + film_id + ", " +  newGenres.get(0).getId() + ")";
+                        + "values (" + filmId + ", " +  newGenres.get(0).getId() + ")";
             } else {
-                sb.append(film_id).append(", ").append(newGenres.get(0).getId()).append(")");
+                sb.append(filmId).append(", ").append(newGenres.get(0).getId()).append(")");
                 for (int i = 1; i < newGenres.size(); i++) {
                     int genreId = newGenres.get(i).getId();
-                    sb.append(", (").append(film_id).append(", ").append(genreId).append(")");
+                    sb.append(", (").append(filmId).append(", ").append(genreId).append(")");
                 }
                 sqlQuery = sb.toString();
             }
