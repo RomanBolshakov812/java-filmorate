@@ -84,8 +84,8 @@ public class InMemoryFilmService implements FilmService {
     }
 
     @Override
-    public Mpa getMpa(Integer mpa_id) {
-        return mpaDao.getMpa(mpa_id);
+    public Mpa getMpa(Integer mpaId) {
+        return mpaDao.getMpa(mpaId);
     }
 
     @Override
@@ -94,8 +94,8 @@ public class InMemoryFilmService implements FilmService {
     }
 
     @Override
-    public Genre getGenre(Integer genre_id) {
-        return genreDao.getGenre(genre_id);
+    public Genre getGenre(Integer genreId) {
+        return genreDao.getGenre(genreId);
     }
 
     private  void isValid(Film film) {
