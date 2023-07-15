@@ -36,8 +36,8 @@ CREATE TABLE if not exists user_film_like (
 );
 
 CREATE TABLE if not exists user_friends (
-  user_id integer,
-  friend_id integer,
+  user_id integer REFERENCES users (user_id) on delete cascade,
+  friend_id integer REFERENCES users (user_id) on delete cascade,
   confirmed boolean
 );
 

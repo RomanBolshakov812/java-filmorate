@@ -13,7 +13,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 @Service
 @RequiredArgsConstructor
-public class InMemoryUserService implements UserService {
+public class InDbUserService implements UserService {
 
     @Autowired
     @Qualifier("userDbStorage")

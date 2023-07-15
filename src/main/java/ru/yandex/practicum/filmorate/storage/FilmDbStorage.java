@@ -15,7 +15,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 @AllArgsConstructor
 public class FilmDbStorage implements FilmStorage {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Film addFilm(Film film) {

@@ -48,14 +48,12 @@ public class FriendsDao {
     public void deleteFriend(User userFirst, User userSecond) {
         Integer userFirstId = userFirst.getId();
         Integer userSecondId = userSecond.getId();
-        String sqlQuery = "delete from user_friends where (user_id = ? and friend_id = ?) "
-                + "or (user_id = ? and friend_id = ?);";
-        jdbcTemplate.update(sqlQuery, userFirstId, userSecondId, userSecondId, userFirstId);
+        String sqlQuery = "delete from user_friends where (user_id = ? and friend_id = ?)";
+        jdbcTemplate.update(sqlQuery, userFirstId, userSecondId);
     }
 
     public List<User> getAllFriends(Integer userId) {
-        String sqlQuery = "select u.user_id, u.name, u.login, u.email, u.birthday "
-                + "from user_friends uf left join users u "
+        String sqlQuery = "select u.* from user_friends uf left join users u "
                 + "on u.user_id = uf.friend_id where uf.user_id = ?";
         return jdbcTemplate.query(sqlQuery, userRowMapper(), userId);
     }

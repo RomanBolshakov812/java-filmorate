@@ -13,7 +13,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 @AllArgsConstructor
 public class MpaDao {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public List<Mpa> getAllMpa() {
         String sqlQuery = "select * from mpa";

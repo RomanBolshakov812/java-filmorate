@@ -13,7 +13,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 @AllArgsConstructor
 public class GenreDao {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public List<Genre> getAllGenre() {
         String sqlQuery = "select * from genres order by genre_id";

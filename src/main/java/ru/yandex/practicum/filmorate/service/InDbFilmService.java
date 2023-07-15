@@ -18,7 +18,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 @Service
 @AllArgsConstructor
-public class InMemoryFilmService implements FilmService {
+public class InDbFilmService implements FilmService {
 
     @Autowired
     @Qualifier("filmDbStorage")
