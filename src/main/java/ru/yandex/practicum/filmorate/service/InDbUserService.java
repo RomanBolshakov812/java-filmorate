@@ -1,21 +1,25 @@
 package ru.yandex.practicum.filmorate.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NullObjectException;
+import ru.yandex.practicum.filmorate.dao.FriendsDao;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 @Service
-@AllArgsConstructor
-public class InMemoryUserService implements UserService {
+@RequiredArgsConstructor
+public class InDbUserService implements UserService {
 
+    @Autowired
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
+    @Autowired
+    private final FriendsDao friendsDao;
 
     @Override
     public User createUser(User user) {
@@ -45,48 +49,32 @@ public class InMemoryUserService implements UserService {
     public void addFriend(Integer userId, Integer friendId) {
         User userFirst = userStorage.getUser(userId);
         User userSecond = userStorage.getUser(friendId);
-        userFirst.getFriends().add(friendId);
-        userSecond.getFriends().add(userId);
+        friendsDao.addFriend(userFirst, userSecond);
     }
 
     @Override
     public void deleteFriend(Integer userId, Integer friendId) {
         User userFirst = userStorage.getUser(userId);
         User userSecond = userStorage.getUser(friendId);
-        userFirst.getFriends().remove(friendId);
-        userSecond.getFriends().remove(userId);
+        friendsDao.deleteFriend(userFirst, userSecond);
     }
 
     @Override
     public List<User> getAllFriends(Integer userId) {
-        Set<Integer> friendIdList = userStorage.getUser(userId).getFriends();
-        if (friendIdList == null || friendIdList.isEmpty()) {
-            throw new NullObjectException("У пользователя нет друзей!");
-        }
-        List<User> friendsList = new ArrayList<>();
-        for (Integer id : friendIdList) {
-            friendsList.add(userStorage.getUser(id));
-        }
-        return friendsList;
+        return friendsDao.getAllFriends(userId);
     }
 
     @Override
     public List<User> getCommonFriends(Integer id, Integer otherId) {
-        Set<Integer> firstUserFriends = userStorage.getUser(id).getFriends();
-        Set<Integer> secondUserFriends = userStorage.getUser(otherId).getFriends();
-        List<User> commonFriends = new ArrayList<>();
-        for (Integer currentId : firstUserFriends) {
-            if (secondUserFriends.contains(currentId)) {
-                commonFriends.add(userStorage.getUser(currentId));
-            }
-        }
-        return commonFriends;
+        return friendsDao.getCommonFriends(id, otherId);
     }
 
     private  void isValid(User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+        if (user.getEmail() == null || user.getEmail().isBlank() ||
+                !user.getEmail().contains("@")) {
             throw new ValidationException("Неверная электронная почта!");
-        } else if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+        } else if (user.getLogin() == null || user.getLogin().isBlank() ||
+                user.getLogin().contains(" ")) {
             throw new ValidationException("Неверный логин!");
         } else if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Неверная дата рождения!");
